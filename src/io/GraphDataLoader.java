@@ -1,4 +1,4 @@
-package service;
+package io;
 
 import graph.WeightedEdge;
 import graph.WeightedGraph;

@@ -1,7 +1,7 @@
 package main;
 
 import sortingalgorithms.SortAlgorithm;
-import service.DataLoader;
+import io.DataLoader;
 import model.Location;
 import service.SortingService;
 
@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Task A entry: load A/B/C CSVs, run bubble / quick / merge via {@link SortingService}, print top 10.
- * After each dataset, the top 10 locations are stored in {@link #getSelectedTop10ByDataset()} for Task B.
+ * Task A: load A/B/C CSVs, run bubble / quick / merge via {@link SortingService}, print top 10 when requested.
+ * After each dataset, the top 10 locations are stored for Task B; use {@link CourseworkMain} as the program entry.
  */
 public final class TaskASorting {
 
@@ -28,7 +28,7 @@ public final class TaskASorting {
 
     /**
      * Keys: "Dataset A", "Dataset B", "Dataset C". Values: top 10 {@link Location} (own list, not a subList view).
-     * Filled when {@link #main} runs; use {@link #getSelectedTop10ByDataset()} from Task B code.
+     * Filled when {@link #runSelection} runs; use {@link #getSelectedTop10ByDataset()} for a copy.
      */
     private static final Map<String, List<Location>> selectedTop10ByDataset = new LinkedHashMap<>();
 
@@ -115,11 +115,6 @@ public final class TaskASorting {
         }
 
         return getSelectedTop10ByDataset();
-    }
-
-    public static void main(String[] args) throws Exception {
-        File baseDir = new File(args.length > 0 ? args[0] : "Group Project Datasets");
-        runSelection(baseDir, true);
     }
 
     private static void describeDataset(String file) {

@@ -23,6 +23,44 @@ public class ShortestPathService {
                                           String startId,
                                           String destinationId,
                                           List<String> orderedWaypoints) {
+        return buildPathResult(caseName, startId, destinationId, orderedWaypoints,
+                this::segmentWithDijkstra);
+    }
+
+    public PathResult findShortestPathBellmanFord(String caseName, String startId, String destinationId) {
+        return findShortestPathViaBellmanFord(caseName, startId, destinationId, Collections.emptyList());
+    }
+
+    public PathResult findShortestPathViaBellmanFord(String caseName,
+                                                     String startId,
+                                                     String destinationId,
+                                                     List<String> orderedWaypoints) {
+        return buildPathResult(caseName, startId, destinationId, orderedWaypoints,
+                this::segmentWithBellmanFord);
+    }
+
+    public PathResult findShortestPathDijkstraHeap(String caseName, String startId, String destinationId) {
+        return findShortestPathViaDijkstraHeap(caseName, startId, destinationId, Collections.emptyList());
+    }
+
+    public PathResult findShortestPathViaDijkstraHeap(String caseName,
+                                                    String startId,
+                                                    String destinationId,
+                                                    List<String> orderedWaypoints) {
+        return buildPathResult(caseName, startId, destinationId, orderedWaypoints,
+                this::segmentWithDijkstraHeap);
+    }
+
+    @FunctionalInterface
+    private interface SegmentComputer {
+        PathSegment compute(String startId, String destinationId);
+    }
+
+    private PathResult buildPathResult(String caseName,
+                                       String startId,
+                                       String destinationId,
+                                       List<String> orderedWaypoints,
+                                       SegmentComputer segmentComputer) {
         List<String> stops = new ArrayList<>();
         stops.add(startId);
         stops.addAll(orderedWaypoints);
@@ -30,17 +68,38 @@ public class ShortestPathService {
 
         List<String> fullPath = new ArrayList<>();
         double totalCost = 0;
+        long totalAlgorithmNanos = 0;
 
         for (int i = 0; i < stops.size() - 1; i++) {
-            PathSegment segment = findSegment(stops.get(i), stops.get(i + 1));
+            PathSegment segment = segmentComputer.compute(stops.get(i), stops.get(i + 1));
             totalCost += segment.cost;
+            totalAlgorithmNanos += segment.algorithmElapsedNanos;
             appendSegment(fullPath, segment.path, i > 0);
         }
 
-        return new PathResult(caseName, startId, destinationId, orderedWaypoints, fullPath, totalCost);
+        return new PathResult(caseName, startId, destinationId, orderedWaypoints, fullPath, totalCost,
+                totalAlgorithmNanos);
     }
 
-    private PathSegment findSegment(String startId, String destinationId) {
+    private PathSegment segmentWithDijkstra(String startId, String destinationId) {
+        return segmentWithTree(startId, destinationId, graph::dijkstraShortestPathTree);
+    }
+
+    private PathSegment segmentWithBellmanFord(String startId, String destinationId) {
+        return segmentWithTree(startId, destinationId, graph::bellmanFordShortestPathTree);
+    }
+
+    private PathSegment segmentWithDijkstraHeap(String startId, String destinationId) {
+        return segmentWithTree(startId, destinationId, graph::dijkstraShortestPathTreeHeap);
+    }
+
+    @FunctionalInterface
+    private interface ShortestPathTreeFactory {
+        WeightedGraph<String>.ShortestPathTree build(int sourceIndex);
+    }
+
+    private PathSegment segmentWithTree(String startId, String destinationId,
+                                        ShortestPathTreeFactory treeFactory) {
         int startIndex = graph.getIndex(startId);
         int destinationIndex = graph.getIndex(destinationId);
 
@@ -51,7 +110,10 @@ public class ShortestPathService {
             throw new IllegalArgumentException("Unknown destination location: " + destinationId);
         }
 
-        WeightedGraph<String>.ShortestPathTree tree = graph.dijkstraShortestPathTree(startIndex);
+        long start = System.nanoTime();
+        WeightedGraph<String>.ShortestPathTree tree = treeFactory.build(startIndex);
+        long algorithmElapsedNanos = System.nanoTime() - start;
+
         double cost = tree.getCost(destinationIndex);
         if (Double.isInfinite(cost)) {
             throw new IllegalStateException("No path found from " + startId + " to " + destinationId);
@@ -60,7 +122,7 @@ public class ShortestPathService {
         List<String> backwardPath = tree.getPath(destinationIndex);
         List<String> forwardPath = new ArrayList<>(backwardPath);
         Collections.reverse(forwardPath);
-        return new PathSegment(forwardPath, cost);
+        return new PathSegment(forwardPath, cost, algorithmElapsedNanos);
     }
 
     private void appendSegment(List<String> fullPath, List<String> segmentPath, boolean skipFirst) {
@@ -74,10 +136,12 @@ public class ShortestPathService {
 
         private final List<String> path;
         private final double cost;
+        private final long algorithmElapsedNanos;
 
-        private PathSegment(List<String> path, double cost) {
+        private PathSegment(List<String> path, double cost, long algorithmElapsedNanos) {
             this.path = path;
             this.cost = cost;
+            this.algorithmElapsedNanos = algorithmElapsedNanos;
         }
     }
 }
