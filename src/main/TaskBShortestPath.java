@@ -49,7 +49,6 @@ public final class TaskBShortestPath {
         printDijkstraHeapCases(paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
 
         System.out.println("=== explore: BMSSP (DMSY arXiv:2504.17033) ===");
-        System.out.println("(explore 实现：在课程数据集上尚未得到完整 SSSP，结果可能与 Dijkstra 不一致)");
         System.out.println();
         printDmsyCases(dmsyPaths, paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
     }
