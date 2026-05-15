@@ -1,13 +1,11 @@
-package algorithm;
+package sortingalgorithms;
 
 import model.Location;
 
 import java.util.List;
 
-/**
- * Quick sort, textbook partition; pivot = last element (swapped to start before partition).
- */
-public class QuickSortLast implements SortAlgorithm {
+
+public class QuickSortMedianOfThree implements SortAlgorithm {
 
     private long comparisons;
 
@@ -34,7 +32,19 @@ public class QuickSortLast implements SortAlgorithm {
 
     private void quickSort(Location[] list, int first, int last) {
         if (last > first) {
-            swap(list, first, last);
+            int mid = first + (last - first) / 2;
+            if (cmp(list[mid], list[first]) < 0) {
+                swap(list, first, mid);
+            }
+            if (cmp(list[last], list[first]) < 0) {
+                swap(list, first, last);
+            }
+            if (cmp(list[last], list[mid]) < 0) {
+                swap(list, mid, last);
+            }
+            if (mid != first) {
+                swap(list, first, mid);
+            }
             int pivotIndex = partition(list, first, last);
             quickSort(list, first, pivotIndex - 1);
             quickSort(list, pivotIndex + 1, last);
@@ -81,7 +91,7 @@ public class QuickSortLast implements SortAlgorithm {
 
     @Override
     public String getName() {
-        return "Quick Sort (pivot: last)";
+        return "Quick Sort (pivot: median-of-three)";
     }
 
     @Override

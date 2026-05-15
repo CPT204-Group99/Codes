@@ -1,13 +1,13 @@
 package service;
 
-import algorithm.BubbleSort;
-import algorithm.MergeSort;
-import algorithm.QuickSortFirst;
-import algorithm.QuickSortLast;
-import algorithm.QuickSortMedianOfThree;
-import algorithm.QuickSortMiddle;
-import algorithm.QuickSortRandom;
-import algorithm.SortAlgorithm;
+import sortingalgorithms.BubbleSort;
+import sortingalgorithms.MergeSort;
+import sortingalgorithms.QuickSortFirst;
+import sortingalgorithms.QuickSortLast;
+import sortingalgorithms.QuickSortMedianOfThree;
+import sortingalgorithms.QuickSortMiddle;
+import sortingalgorithms.QuickSortRandom;
+import sortingalgorithms.SortAlgorithm;
 import model.Location;
 
 import java.util.ArrayList;

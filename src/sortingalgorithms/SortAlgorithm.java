@@ -1,4 +1,4 @@
-package algorithm;
+package sortingalgorithms;
 
 import model.Location;
 

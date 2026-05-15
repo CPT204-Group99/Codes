@@ -1,9 +1,11 @@
 package graph;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 无向图邻接表；实现 {@link Graph}（教材风格，不含 DFS/BFS 实现）。
+ */
 public class UnweightedGraph<V> implements Graph<V> {
 
     protected List<V> vertices = new ArrayList<>();
@@ -12,16 +14,48 @@ public class UnweightedGraph<V> implements Graph<V> {
     public UnweightedGraph() {
     }
 
-    public UnweightedGraph(List<V> vertices, List<Edge> edges) {
+    public UnweightedGraph(V[] vertices, int[][] edges) {
         for (V vertex : vertices) {
             addVertex(vertex);
         }
-        createAdjacencyLists(edges);
+        createAdjacencyLists(edges, vertices.length);
     }
 
-    private void createAdjacencyLists(List<Edge> edges) {
+    public UnweightedGraph(List<V> vertices, List<Edge> edges) {
+        for (int i = 0; i < vertices.size(); i++) {
+            addVertex(vertices.get(i));
+        }
+        createAdjacencyLists(edges, vertices.size());
+    }
+
+    public UnweightedGraph(List<Edge> edges, int numberOfVertices) {
+        for (int i = 0; i < numberOfVertices; i++) {
+            addVertex(castVertexIndex(i));
+        }
+        createAdjacencyLists(edges, numberOfVertices);
+    }
+
+    public UnweightedGraph(int[][] edges, int numberOfVertices) {
+        for (int i = 0; i < numberOfVertices; i++) {
+            addVertex(castVertexIndex(i));
+        }
+        createAdjacencyLists(edges, numberOfVertices);
+    }
+
+    @SuppressWarnings("unchecked")
+    private V castVertexIndex(int i) {
+        return (V) Integer.valueOf(i);
+    }
+
+    private void createAdjacencyLists(int[][] edges, int numberOfVertices) {
+        for (int[] edge : edges) {
+            addEdge(edge[0], edge[1]);
+        }
+    }
+
+    private void createAdjacencyLists(List<Edge> edges, int numberOfVertices) {
         for (Edge edge : edges) {
-            addEdge(edge);
+            addEdge(edge.u, edge.v);
         }
     }
 
@@ -41,30 +75,30 @@ public class UnweightedGraph<V> implements Graph<V> {
     }
 
     @Override
-    public int getIndex(V vertex) {
-        return vertices.indexOf(vertex);
+    public int getIndex(V v) {
+        return vertices.indexOf(v);
     }
 
     @Override
     public List<Integer> getNeighbors(int index) {
         List<Integer> result = new ArrayList<>();
-        for (Edge edge : neighbors.get(index)) {
-            result.add(edge.v);
+        for (Edge e : neighbors.get(index)) {
+            result.add(e.v);
         }
         return result;
     }
 
     @Override
-    public int getDegree(int vertexIndex) {
-        return neighbors.get(vertexIndex).size();
+    public int getDegree(int v) {
+        return neighbors.get(v).size();
     }
 
     @Override
     public void printEdges() {
         for (int u = 0; u < neighbors.size(); u++) {
             System.out.print(getVertex(u) + " (" + u + "): ");
-            for (Edge edge : neighbors.get(u)) {
-                System.out.print("(" + getVertex(edge.u) + ", " + getVertex(edge.v) + ") ");
+            for (Edge e : neighbors.get(u)) {
+                System.out.print("(" + getVertex(e.u) + ", " + getVertex(e.v) + ") ");
             }
             System.out.println();
         }
@@ -78,27 +112,27 @@ public class UnweightedGraph<V> implements Graph<V> {
 
     @Override
     public boolean addVertex(V vertex) {
-        if (vertices.contains(vertex)) {
-            return false;
+        if (!vertices.contains(vertex)) {
+            vertices.add(vertex);
+            neighbors.add(new ArrayList<>());
+            return true;
         }
-        vertices.add(vertex);
-        neighbors.add(new ArrayList<>());
-        return true;
+        return false;
     }
 
     @Override
-    public boolean addEdge(Edge edge) {
-        if (edge.u < 0 || edge.u >= getSize()) {
-            throw new IllegalArgumentException("No such index: " + edge.u);
+    public boolean addEdge(Edge e) {
+        if (e.u < 0 || e.u > getSize() - 1) {
+            throw new IllegalArgumentException("No such index: " + e.u);
         }
-        if (edge.v < 0 || edge.v >= getSize()) {
-            throw new IllegalArgumentException("No such index: " + edge.v);
+        if (e.v < 0 || e.v > getSize() - 1) {
+            throw new IllegalArgumentException("No such index: " + e.v);
         }
-        if (neighbors.get(edge.u).contains(edge)) {
-            return false;
+        if (!neighbors.get(e.u).contains(e)) {
+            neighbors.get(e.u).add(e);
+            return true;
         }
-        neighbors.get(edge.u).add(edge);
-        return true;
+        return false;
     }
 
     @Override
@@ -106,70 +140,7 @@ public class UnweightedGraph<V> implements Graph<V> {
         return addEdge(new Edge(u, v));
     }
 
-    @Override
-    public SearchTree dfs(int startIndex) {
-        List<Integer> searchOrder = new ArrayList<>();
-        int[] parent = new int[vertices.size()];
-        for (int i = 0; i < parent.length; i++) {
-            parent[i] = -1;
-        }
-        boolean[] visited = new boolean[vertices.size()];
-        dfs(startIndex, parent, searchOrder, visited);
-        return new SearchTree(startIndex, parent, searchOrder);
-    }
-
-    private void dfs(int current, int[] parent, List<Integer> searchOrder, boolean[] visited) {
-        searchOrder.add(current);
-        visited[current] = true;
-
-        for (Edge edge : neighbors.get(current)) {
-            if (!visited[edge.v]) {
-                parent[edge.v] = current;
-                dfs(edge.v, parent, searchOrder, visited);
-            }
-        }
-    }
-
-    @Override
-    public SearchTree bfs(int startIndex) {
-        List<Integer> searchOrder = new ArrayList<>();
-        int[] parent = new int[vertices.size()];
-        for (int i = 0; i < parent.length; i++) {
-            parent[i] = -1;
-        }
-
-        LinkedList<Integer> queue = new LinkedList<>();
-        boolean[] visited = new boolean[vertices.size()];
-        queue.offer(startIndex);
-        visited[startIndex] = true;
-
-        while (!queue.isEmpty()) {
-            int current = queue.poll();
-            searchOrder.add(current);
-            for (Edge edge : neighbors.get(current)) {
-                if (!visited[edge.v]) {
-                    queue.offer(edge.v);
-                    parent[edge.v] = current;
-                    visited[edge.v] = true;
-                }
-            }
-        }
-
-        return new SearchTree(startIndex, parent, searchOrder);
-    }
-
-    @Override
-    public boolean remove(V vertex) {
-        return false;
-    }
-
-    @Override
-    public boolean remove(int u, int v) {
-        return false;
-    }
-
     public class SearchTree {
-
         private final int root;
         private final int[] parent;
         private final List<Integer> searchOrder;
@@ -184,8 +155,8 @@ public class UnweightedGraph<V> implements Graph<V> {
             return root;
         }
 
-        public int getParent(int vertexIndex) {
-            return parent[vertexIndex];
+        public int getParent(int v) {
+            return parent[v];
         }
 
         public List<Integer> getSearchOrder() {
@@ -212,5 +183,26 @@ public class UnweightedGraph<V> implements Graph<V> {
                 System.out.print(path.get(i) + " ");
             }
         }
+
+        public void printTree() {
+            System.out.println("Root is: " + vertices.get(root));
+            System.out.print("Edges: ");
+            for (int i = 0; i < parent.length; i++) {
+                if (parent[i] != -1) {
+                    System.out.print("(" + vertices.get(parent[i]) + ", " + vertices.get(i) + ") ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    @Override
+    public boolean remove(V v) {
+        return true;
+    }
+
+    @Override
+    public boolean remove(int u, int v) {
+        return true;
     }
 }

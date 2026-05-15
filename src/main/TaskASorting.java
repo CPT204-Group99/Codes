@@ -1,6 +1,6 @@
 package main;
 
-import algorithm.SortAlgorithm;
+import sortingalgorithms.SortAlgorithm;
 import service.DataLoader;
 import model.Location;
 import service.SortingService;
@@ -35,7 +35,6 @@ public final class TaskASorting {
     private TaskASorting() {
     }
 
-    
     public static Map<String, List<Location>> getSelectedTop10ByDataset() {
         Map<String, List<Location>> copy = new LinkedHashMap<>();
         for (String key : selectedTop10ByDataset.keySet()) {

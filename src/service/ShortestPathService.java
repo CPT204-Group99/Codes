@@ -51,7 +51,7 @@ public class ShortestPathService {
             throw new IllegalArgumentException("Unknown destination location: " + destinationId);
         }
 
-        WeightedGraph<String>.ShortestPathTree tree = graph.getShortestPath(startIndex);
+        WeightedGraph<String>.ShortestPathTree tree = graph.dijkstraShortestPathTree(startIndex);
         double cost = tree.getCost(destinationIndex);
         if (Double.isInfinite(cost)) {
             throw new IllegalStateException("No path found from " + startId + " to " + destinationId);

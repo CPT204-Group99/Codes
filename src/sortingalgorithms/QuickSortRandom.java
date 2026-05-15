@@ -1,14 +1,16 @@
-package algorithm;
+package sortingalgorithms;
 
 import model.Location;
 
 import java.util.List;
+import java.util.Random;
 
 /**
- * Quick sort, textbook partition; pivot = middle index (swapped to start before partition).
+ * Quick sort, textbook partition; pivot = random index in segment (swapped to start before partition).
  */
-public class QuickSortMiddle implements SortAlgorithm {
+public class QuickSortRandom implements SortAlgorithm {
 
+    private final Random random = new Random();
     private long comparisons;
 
     private int cmp(Location a, Location b) {
@@ -34,8 +36,8 @@ public class QuickSortMiddle implements SortAlgorithm {
 
     private void quickSort(Location[] list, int first, int last) {
         if (last > first) {
-            int mid = first + (last - first) / 2;
-            swap(list, first, mid);
+            int r = first + random.nextInt(last - first + 1);
+            swap(list, first, r);
             int pivotIndex = partition(list, first, last);
             quickSort(list, first, pivotIndex - 1);
             quickSort(list, pivotIndex + 1, last);
@@ -82,7 +84,7 @@ public class QuickSortMiddle implements SortAlgorithm {
 
     @Override
     public String getName() {
-        return "Quick Sort (pivot: middle)";
+        return "Quick Sort (pivot: random)";
     }
 
     @Override

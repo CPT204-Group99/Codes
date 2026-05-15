@@ -2,6 +2,9 @@ package graph;
 
 import java.util.List;
 
+/**
+ * 图 ADT（与教材一致；作业未要求 DFS/BFS，故接口中不包含 {@code dfs}/{@code bfs}）。
+ */
 public interface Graph<V> {
 
     int getSize();
@@ -10,11 +13,11 @@ public interface Graph<V> {
 
     V getVertex(int index);
 
-    int getIndex(V vertex);
+    int getIndex(V v);
 
     List<Integer> getNeighbors(int index);
 
-    int getDegree(int vertexIndex);
+    int getDegree(int v);
 
     void printEdges();
 
@@ -24,13 +27,9 @@ public interface Graph<V> {
 
     boolean addEdge(int u, int v);
 
-    boolean addEdge(Edge edge);
+    boolean addEdge(Edge e);
 
-    boolean remove(V vertex);
+    boolean remove(V v);
 
     boolean remove(int u, int v);
-
-    UnweightedGraph<V>.SearchTree dfs(int startIndex);
-
-    UnweightedGraph<V>.SearchTree bfs(int startIndex);
 }

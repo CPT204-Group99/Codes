@@ -1,4 +1,4 @@
-package algorithm;
+package sortingalgorithms;
 
 import model.Location;
 
@@ -39,7 +39,7 @@ public class BubbleSort implements SortAlgorithm {
                     list[i] = list[i + 1];
                     list[i + 1] = temp;
 
-                    needNextPass = true; 
+                    needNextPass = true;
                 }
             }
         }

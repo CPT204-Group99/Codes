@@ -1,8 +1,5 @@
-package graph;
+package org.example;
 
-/**
- * 无向图边 (u, v)；与课程示例 {@code Graph codes/Edge.java} 一致。
- */
 public class Edge {
     public int u;
     public int v;
@@ -12,7 +9,6 @@ public class Edge {
         this.v = v;
     }
 
-    @Override
     public boolean equals(Object o) {
         return u == ((Edge) o).u && v == ((Edge) o).v;
     }
