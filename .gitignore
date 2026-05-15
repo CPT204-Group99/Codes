@@ -2,6 +2,11 @@
 target/
 pom.xml
 
+# Local build / reference copies
+out/
+Graph codes/
+Sorting Algorithms Codes/
+
 # Compiled / packaged
 *.class
 *.jar
