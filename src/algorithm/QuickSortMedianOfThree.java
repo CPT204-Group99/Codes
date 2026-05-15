@@ -5,10 +5,9 @@ import model.Location;
 import java.util.List;
 
 /**
- * Quick sort (chapter23 style: first element pivot, low/high scan, then swap pivot).
- * Same partition logic as the int[] version, using {@link Location#compareTo(Location)}.
+ * Quick sort, textbook partition; pivot = median of first, middle, last (median moved to start).
  */
-public class QuickSort implements SortAlgorithm {
+public class QuickSortMedianOfThree implements SortAlgorithm {
 
     private long comparisons;
 
@@ -35,30 +34,43 @@ public class QuickSort implements SortAlgorithm {
 
     private void quickSort(Location[] list, int first, int last) {
         if (last > first) {
+            int mid = first + (last - first) / 2;
+            if (cmp(list[mid], list[first]) < 0) {
+                swap(list, first, mid);
+            }
+            if (cmp(list[last], list[first]) < 0) {
+                swap(list, first, last);
+            }
+            if (cmp(list[last], list[mid]) < 0) {
+                swap(list, mid, last);
+            }
+            if (mid != first) {
+                swap(list, first, mid);
+            }
             int pivotIndex = partition(list, first, last);
             quickSort(list, first, pivotIndex - 1);
             quickSort(list, pivotIndex + 1, last);
         }
     }
 
-    /** Partition the array list[first..last] */
+    private void swap(Location[] list, int i, int j) {
+        Location t = list[i];
+        list[i] = list[j];
+        list[j] = t;
+    }
+
     private int partition(Location[] list, int first, int last) {
-        Location pivot = list[first]; // Choose the first element as the pivot
-        int low = first + 1; // Index for forward search
-        int high = last; // Index for backward search
+        Location pivot = list[first];
+        int low = first + 1;
+        int high = last;
 
         while (high > low) {
-            // Search forward from left
             while (low <= high && cmp(list[low], pivot) <= 0) {
                 low++;
             }
-
-            // Search backward from right
             while (low <= high && cmp(list[high], pivot) > 0) {
                 high--;
             }
-
-            // Swap two elements in the list
             if (high > low) {
                 Location temp = list[high];
                 list[high] = list[low];
@@ -70,7 +82,6 @@ public class QuickSort implements SortAlgorithm {
             high--;
         }
 
-        // Swap pivot with list[high]
         if (cmp(pivot, list[high]) > 0) {
             list[first] = list[high];
             list[high] = pivot;
@@ -82,7 +93,7 @@ public class QuickSort implements SortAlgorithm {
 
     @Override
     public String getName() {
-        return "Quick Sort";
+        return "Quick Sort (pivot: median-of-three)";
     }
 
     @Override
