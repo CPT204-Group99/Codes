@@ -4,10 +4,6 @@ import model.Location;
 
 import java.util.List;
 
-/**
- * Merge sort (chapter23 style: split two halves with arraycopy, merge into temp).
- * Same structure as the int[] textbook version.
- */
 public class MergeSort implements SortAlgorithm {
 
     private long comparisons;
@@ -31,7 +27,7 @@ public class MergeSort implements SortAlgorithm {
         return System.nanoTime() - start;
     }
 
-    /** The method for sorting the numbers (textbook structure on Location[]). */
+
     private void mergeSort(Location[] list) {
         if (list.length > 1) {
             // Merge sort the first half
@@ -50,7 +46,7 @@ public class MergeSort implements SortAlgorithm {
         }
     }
 
-    /** Merge two sorted lists */
+ 
     private void merge(Location[] list1, Location[] list2, Location[] temp) {
         int current1 = 0; // Current index in list1
         int current2 = 0; // Current index in list2

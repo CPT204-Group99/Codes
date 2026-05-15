@@ -1,8 +1,6 @@
 package model;
 
-/**
- * One candidate row: location id and priority score for Task A ranking.
- */
+
 public class Location implements Comparable<Location> {
 
     private final String locationId;
@@ -24,9 +22,6 @@ public class Location implements Comparable<Location> {
         return priorityScore;
     }
 
-    /**
-     * Higher priority score first; tie-break by smaller location id (lexicographic).
-     */
     @Override
     public int compareTo(Location other) {
         if (this.priorityScore != other.priorityScore) {
