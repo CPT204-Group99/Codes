@@ -1,7 +1,7 @@
 package main;
 
 import sortingalgorithms.SortAlgorithm;
-import io.DataLoader;
+import dataloader.DataLoader;
 import model.Location;
 import service.SortingService;
 

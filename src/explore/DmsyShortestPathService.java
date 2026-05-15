@@ -1,4 +1,4 @@
-package service;
+package explore;
 
 import explore.dmsy.DirectedGraph;
 import explore.dmsy.DmsySingleSourceShortestPaths;
@@ -12,8 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Task B shortest-path queries via Duan et al. BMSSP (arXiv:2504.17033v2) on an undirected graph
- * represented as bidirectional directed edges.
+ * Explore-only shortest-path queries via Duan et al. BMSSP (arXiv:2504.17033v2).
  */
 public class DmsyShortestPathService {
 

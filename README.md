@@ -5,12 +5,12 @@
 | 包 | 说明 |
 |----|------|
 | `model` | `Location`、`PathResult` |
-| `graph` | 图 ADT：`Graph`、`Edge`、`WeightedEdge`、`UnweightedGraph`、`WeightedGraph` |
+| `graph` | 图 ADT；`graph.shortestpath` 含 Dijkstra（数组/堆）、Bellman-Ford 静态实现 |
 | `sortingalgorithms` | `SortAlgorithm` 及冒泡、归并、多种快排 |
-| `io` | `DataLoader`、`GraphDataLoader`（CSV 读入） |
-| `service` | `SortingService`；`ShortestPathService`（数组版 Dijkstra、Bellman-Ford、`PriorityQueue` 堆版 Dijkstra） |
+| `dataloader` | `DataLoader`、`GraphDataLoader`（CSV 读入） |
+| `service` | `SortingService`、`ShortestPathService` |
 | `main` | `CourseworkMain` 为唯一程序入口；`TaskASorting`、`TaskBShortestPath` 为 A/B 逻辑 |
-| `explore` | 论文 Duan et al. (arXiv:2504.17033v2) 的 **Algorithm 1–3 + Lemma 3.3 D** 实现，包路径 `explore.dmsy`；`explore.ExploreMain` 为演示入口 |
+| `explore` | 论文 DMSY（`explore.dmsy`）及 `DmsyShortestPathService`；`explore.ExploreMain` 为独立演示入口 |
 
 ## 编译与运行
 

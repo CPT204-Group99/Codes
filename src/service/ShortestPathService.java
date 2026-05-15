@@ -82,7 +82,7 @@ public class ShortestPathService {
     }
 
     private PathSegment segmentWithDijkstra(String startId, String destinationId) {
-        return segmentWithTree(startId, destinationId, graph::dijkstraShortestPathTree);
+        return segmentWithTree(startId, destinationId, graph::getShortestPath);
     }
 
     private PathSegment segmentWithBellmanFord(String startId, String destinationId) {

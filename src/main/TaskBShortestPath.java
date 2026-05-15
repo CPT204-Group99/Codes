@@ -1,10 +1,10 @@
 package main;
 
+import dataloader.GraphDataLoader;
+import explore.DmsyShortestPathService;
 import graph.WeightedGraph;
 import model.Location;
 import model.PathResult;
-import io.GraphDataLoader;
-import service.DmsyShortestPathService;
 import service.ShortestPathService;
 
 import java.io.File;
@@ -18,10 +18,6 @@ public final class TaskBShortestPath {
     private TaskBShortestPath() {
     }
 
-    /**
-     * Prints shortest-path cases for Task B using locations already chosen by Task A.
-     * Does not call {@link TaskASorting#runSelection}; pass the map returned from a single {@code runSelection} call.
-     */
     public static void runTaskB(File baseDir, Map<String, List<Location>> selectedByDataset) throws Exception {
         WeightedGraph<String> graph = GraphDataLoader.loadUndirectedWeightedGraph(new File(baseDir, "paths.csv"));
         ShortestPathService paths = new ShortestPathService(graph);
@@ -42,22 +38,20 @@ public final class TaskBShortestPath {
 
         System.out.println("=== Dijkstra ===");
         System.out.println();
-        printDijkstraCases(paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5, "");
+        printDijkstraCases(paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
 
         System.out.println("=== Bellman-Ford ===");
         System.out.println();
-        printBellmanFordCases(paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5, " [Bellman-Ford]");
+        printBellmanFordCases(paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
 
         System.out.println("=== Dijkstra (binary heap) ===");
         System.out.println();
-        printDijkstraHeapCases(paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5,
-                " [Dijkstra-heap]");
+        printDijkstraHeapCases(paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
 
         System.out.println("=== explore: BMSSP (DMSY arXiv:2504.17033) ===");
         System.out.println("(explore 实现：在课程数据集上尚未得到完整 SSSP，结果可能与 Dijkstra 不一致)");
         System.out.println();
-        printDmsyCases(dmsyPaths, paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5,
-                " [BMSSP/DMSY]");
+        printDmsyCases(dmsyPaths, paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
     }
 
     private static void printDijkstraCases(ShortestPathService paths,
@@ -66,19 +60,11 @@ public final class TaskBShortestPath {
                                            String datasetB1,
                                            String datasetB5,
                                            String datasetC1,
-                                           String datasetC5,
-                                           String caseSuffix) {
-        PathResult case1 = paths.findShortestPath("Case 1" + caseSuffix, datasetA1, datasetA1);
-        PathResult case2 = paths.findShortestPath("Case 2" + caseSuffix, datasetA1, datasetA10);
-        PathResult case3 = paths.findShortestPathVia(
-                "Case 3" + caseSuffix, datasetA1, datasetB1, Arrays.asList(datasetB5));
-        PathResult case4 = paths.findShortestPathVia(
-                "Case 4" + caseSuffix, datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5));
-
-        printCase(case1);
-        printCase(case2);
-        printCase(case3);
-        printCase(case4);
+                                           String datasetC5) {
+        printCase(paths.findShortestPath("Case 1", datasetA1, datasetA1));
+        printCase(paths.findShortestPath("Case 2", datasetA1, datasetA10));
+        printCase(paths.findShortestPathVia("Case 3", datasetA1, datasetB1, Arrays.asList(datasetB5)));
+        printCase(paths.findShortestPathVia("Case 4", datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5)));
     }
 
     private static void printBellmanFordCases(ShortestPathService paths,
@@ -87,19 +73,11 @@ public final class TaskBShortestPath {
                                               String datasetB1,
                                               String datasetB5,
                                               String datasetC1,
-                                              String datasetC5,
-                                              String caseSuffix) {
-        PathResult case1 = paths.findShortestPathBellmanFord("Case 1" + caseSuffix, datasetA1, datasetA1);
-        PathResult case2 = paths.findShortestPathBellmanFord("Case 2" + caseSuffix, datasetA1, datasetA10);
-        PathResult case3 = paths.findShortestPathViaBellmanFord(
-                "Case 3" + caseSuffix, datasetA1, datasetB1, Arrays.asList(datasetB5));
-        PathResult case4 = paths.findShortestPathViaBellmanFord(
-                "Case 4" + caseSuffix, datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5));
-
-        printCase(case1);
-        printCase(case2);
-        printCase(case3);
-        printCase(case4);
+                                              String datasetC5) {
+        printCase(paths.findShortestPathBellmanFord("Case 1", datasetA1, datasetA1));
+        printCase(paths.findShortestPathBellmanFord("Case 2", datasetA1, datasetA10));
+        printCase(paths.findShortestPathViaBellmanFord("Case 3", datasetA1, datasetB1, Arrays.asList(datasetB5)));
+        printCase(paths.findShortestPathViaBellmanFord("Case 4", datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5)));
     }
 
     private static void printDijkstraHeapCases(ShortestPathService paths,
@@ -108,19 +86,11 @@ public final class TaskBShortestPath {
                                                String datasetB1,
                                                String datasetB5,
                                                String datasetC1,
-                                               String datasetC5,
-                                               String caseSuffix) {
-        PathResult case1 = paths.findShortestPathDijkstraHeap("Case 1" + caseSuffix, datasetA1, datasetA1);
-        PathResult case2 = paths.findShortestPathDijkstraHeap("Case 2" + caseSuffix, datasetA1, datasetA10);
-        PathResult case3 = paths.findShortestPathViaDijkstraHeap(
-                "Case 3" + caseSuffix, datasetA1, datasetB1, Arrays.asList(datasetB5));
-        PathResult case4 = paths.findShortestPathViaDijkstraHeap(
-                "Case 4" + caseSuffix, datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5));
-
-        printCase(case1);
-        printCase(case2);
-        printCase(case3);
-        printCase(case4);
+                                               String datasetC5) {
+        printCase(paths.findShortestPathDijkstraHeap("Case 1", datasetA1, datasetA1));
+        printCase(paths.findShortestPathDijkstraHeap("Case 2", datasetA1, datasetA10));
+        printCase(paths.findShortestPathViaDijkstraHeap("Case 3", datasetA1, datasetB1, Arrays.asList(datasetB5)));
+        printCase(paths.findShortestPathViaDijkstraHeap("Case 4", datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5)));
     }
 
     private static void printDmsyCases(DmsyShortestPathService dmsyPaths,
@@ -130,13 +100,11 @@ public final class TaskBShortestPath {
                                        String datasetB1,
                                        String datasetB5,
                                        String datasetC1,
-                                       String datasetC5,
-                                       String caseSuffix) {
-        runDmsyCase(dmsyPaths, dijkstraPaths, "Case 1" + caseSuffix, datasetA1, datasetA1, List.of());
-        runDmsyCase(dmsyPaths, dijkstraPaths, "Case 2" + caseSuffix, datasetA1, datasetA10, List.of());
-        runDmsyCase(dmsyPaths, dijkstraPaths, "Case 3" + caseSuffix, datasetA1, datasetB1, Arrays.asList(datasetB5));
-        runDmsyCase(dmsyPaths, dijkstraPaths, "Case 4" + caseSuffix, datasetA1, datasetC1,
-                Arrays.asList(datasetB5, datasetC5));
+                                       String datasetC5) {
+        runDmsyCase(dmsyPaths, dijkstraPaths, "Case 1", datasetA1, datasetA1, List.of());
+        runDmsyCase(dmsyPaths, dijkstraPaths, "Case 2", datasetA1, datasetA10, List.of());
+        runDmsyCase(dmsyPaths, dijkstraPaths, "Case 3", datasetA1, datasetB1, Arrays.asList(datasetB5));
+        runDmsyCase(dmsyPaths, dijkstraPaths, "Case 4", datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5));
     }
 
     private static void runDmsyCase(DmsyShortestPathService dmsyPaths,
@@ -152,8 +120,8 @@ public final class TaskBShortestPath {
             printCase(result);
         } catch (RuntimeException ex) {
             PathResult ref = vias.isEmpty()
-                    ? dijkstraPaths.findShortestPath(caseName + " (Dijkstra ref)", start, destination)
-                    : dijkstraPaths.findShortestPathVia(caseName + " (Dijkstra ref)", start, destination, vias);
+                    ? dijkstraPaths.findShortestPath(caseName, start, destination)
+                    : dijkstraPaths.findShortestPathVia(caseName, start, destination, vias);
             System.out.println(caseName);
             System.out.println("  BMSSP failed: " + ex.getMessage());
             System.out.printf("  (Dijkstra reference: cost %s, path %s)%n",
@@ -194,8 +162,7 @@ public final class TaskBShortestPath {
         }
         System.out.println("  shortest path: " + String.join(" -> ", result.getPath()));
         System.out.println("  total path cost: " + formatCost(result.getTotalCost()));
-        System.out.printf("  algorithm time (System.nanoTime): %.6f ms%n",
-                result.getAlgorithmElapsedNanos() / 1_000_000.0);
+        System.out.printf("  wall time: %.6f ms%n", result.getAlgorithmElapsedNanos() / 1_000_000.0);
         System.out.println();
     }
 
