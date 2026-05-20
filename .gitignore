@@ -6,7 +6,9 @@ pom.xml
 out/
 Graph codes/
 Sorting Algorithms Codes/
-
+docs/
+W10 Visualizers/
+src/visualizers/
 # Compiled / packaged
 *.class
 *.jar
@@ -24,6 +26,7 @@ hs_err_pid*
 .vscode/
 *.swp
 *.swo
+
 
 # OS
 .DS_Store

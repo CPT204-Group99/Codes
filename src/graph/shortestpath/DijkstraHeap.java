@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
-/** Dijkstra with a binary min-heap; same {@code cost}, {@code parent}, {@code T} naming as Graph codes. */
+
 public final class DijkstraHeap {
 
     private DijkstraHeap() {

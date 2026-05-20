@@ -48,7 +48,6 @@ public class WeightedGraph<V> extends UnweightedGraph<V> {
     }
 
 
-
     private ShortestPathTree toShortestPathTree(ShortestPathComputation result) {
         return new ShortestPathTree(result.sourceVertex(), result.parent(), result.T(), result.cost());
     }

@@ -2,9 +2,7 @@ package graph;
 
 import java.util.List;
 
-/**
- * 图 ADT（与教材一致；作业未要求 DFS/BFS，故接口中不包含 {@code dfs}/{@code bfs}）。
- */
+
 public interface Graph<V> {
 
     int getSize();

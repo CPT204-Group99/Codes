@@ -5,9 +5,7 @@ import model.Location;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Quick sort, textbook partition; pivot = random index in segment (swapped to start before partition).
- */
+
 public class QuickSortRandom implements SortAlgorithm {
 
     private final Random random = new Random();

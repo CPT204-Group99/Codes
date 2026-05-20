@@ -11,7 +11,6 @@ public class PathResult {
     private final List<String> viaLocationIds;
     private final List<String> path;
     private final double totalCost;
-    /** Sum of {@link System#nanoTime()} spans for shortest-path-tree builds (Dijkstra or Bellman-Ford) over all segments. */
     private final long algorithmElapsedNanos;
 
     public PathResult(String caseName,

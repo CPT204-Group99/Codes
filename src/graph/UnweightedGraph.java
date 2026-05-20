@@ -3,9 +3,6 @@ package graph;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 无向图邻接表；实现 {@link Graph}（教材风格，不含 DFS/BFS 实现）。
- */
 public class UnweightedGraph<V> implements Graph<V> {
 
     protected List<V> vertices = new ArrayList<>();

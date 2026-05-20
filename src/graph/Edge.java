@@ -1,8 +1,6 @@
 package graph;
 
-/**
- * 无向图边 (u, v)；与课程示例 {@code Graph codes/Edge.java} 一致。
- */
+
 public class Edge {
     public int u;
     public int v;

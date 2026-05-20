@@ -14,14 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Task A: runs sort algorithms on copies of the same list (fair comparison).
- */
+
 public class SortingService {
 
-    /**
-     * Bubble, five quick-sort variants (separate classes per pivot rule), then merge.
-     */
     public List<SortAlgorithm> allAlgorithms() {
         return Arrays.asList(
                 new BubbleSort(),
