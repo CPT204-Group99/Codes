@@ -71,7 +71,6 @@ public final class Algorithm1FindPivots {
         return new Result(pivots, w);
     }
 
-    @SuppressWarnings("unchecked")
     private static Set<Integer> pivotsFromForest(int n,
                                                  List<int[]> tightEdges,
                                                  Set<Integer> s,
@@ -95,12 +94,12 @@ public final class Algorithm1FindPivots {
             }
         }
 
-        List<Integer>[] children = new ArrayList[n];
+        List<List<Integer>> children = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
-            children[i] = new ArrayList<>();
+            children.add(new ArrayList<>());
         }
         for (Map.Entry<Integer, Integer> e : parent.entrySet()) {
-            children[e.getValue()].add(e.getKey());
+            children.get(e.getValue()).add(e.getKey());
         }
 
         Set<Integer> pivots = new HashSet<>();
@@ -119,13 +118,13 @@ public final class Algorithm1FindPivots {
         return pivots;
     }
 
-    private static int subtreeSize(int root, List<Integer>[] children) {
+    private static int subtreeSize(int root, List<List<Integer>> children) {
         int c = 1;
         ArrayDeque<Integer> dq = new ArrayDeque<>();
         dq.add(root);
         while (!dq.isEmpty()) {
             int u = dq.removeFirst();
-            for (int v : children[u]) {
+            for (int v : children.get(u)) {
                 c++;
                 dq.addLast(v);
             }

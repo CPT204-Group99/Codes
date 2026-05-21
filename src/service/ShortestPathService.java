@@ -9,9 +9,9 @@ import java.util.List;
 
 public class ShortestPathService {
 
-    private static final int ALGO_DIJKSTRA_ARRAY = 0;
-    private static final int ALGO_BELLMAN_FORD = 1;
-    private static final int ALGO_DIJKSTRA_HEAP = 2;
+    private static final int DIJKSTRA_ARRAY = 0;
+    private static final int BELLMAN_FORD = 1;
+    private static final int DIJKSTRA_HEAP = 2;
 
     private final WeightedGraph<String> graph;
 
@@ -27,7 +27,7 @@ public class ShortestPathService {
                                           String startId,
                                           String destinationId,
                                           List<String> orderedWaypoints) {
-        return buildPathResult(caseName, startId, destinationId, orderedWaypoints, ALGO_DIJKSTRA_ARRAY);
+        return buildPathResult(caseName, startId, destinationId, orderedWaypoints, DIJKSTRA_ARRAY);
     }
 
     public PathResult findShortestPathBellmanFord(String caseName, String startId, String destinationId) {
@@ -38,7 +38,7 @@ public class ShortestPathService {
                                                      String startId,
                                                      String destinationId,
                                                      List<String> orderedWaypoints) {
-        return buildPathResult(caseName, startId, destinationId, orderedWaypoints, ALGO_BELLMAN_FORD);
+        return buildPathResult(caseName, startId, destinationId, orderedWaypoints, BELLMAN_FORD);
     }
 
     public PathResult findShortestPathDijkstraHeap(String caseName, String startId, String destinationId) {
@@ -49,7 +49,7 @@ public class ShortestPathService {
                                                     String startId,
                                                     String destinationId,
                                                     List<String> orderedWaypoints) {
-        return buildPathResult(caseName, startId, destinationId, orderedWaypoints, ALGO_DIJKSTRA_HEAP);
+        return buildPathResult(caseName, startId, destinationId, orderedWaypoints, DIJKSTRA_HEAP);
     }
 
     private PathResult buildPathResult(String caseName,
@@ -90,11 +90,11 @@ public class ShortestPathService {
 
         long start = System.nanoTime();
         WeightedGraph<String>.ShortestPathTree tree;
-        if (algorithmType == ALGO_DIJKSTRA_ARRAY) {
+        if (algorithmType == DIJKSTRA_ARRAY) {
             tree = graph.getShortestPath(startIndex);
-        } else if (algorithmType == ALGO_BELLMAN_FORD) {
+        } else if (algorithmType == BELLMAN_FORD) {
             tree = graph.bellmanFordShortestPathTree(startIndex);
-        } else if (algorithmType == ALGO_DIJKSTRA_HEAP) {
+        } else if (algorithmType == DIJKSTRA_HEAP) {
             tree = graph.dijkstraShortestPathTreeHeap(startIndex);
         } else {
             throw new IllegalArgumentException("Unknown algorithm type: " + algorithmType);

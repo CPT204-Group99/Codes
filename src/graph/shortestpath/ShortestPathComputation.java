@@ -2,10 +2,6 @@ package graph.shortestpath;
 
 import java.util.List;
 
-/**
- * Holds the result of one single-source shortest-path computation
- * (parent pointers, costs, and the settled set T) before conversion to {@code ShortestPathTree}.
- */
 public final class ShortestPathComputation {
 
     private final int sourceVertex;
