@@ -216,19 +216,6 @@ This code is an **educational port** of BMSSP ideas from Duan et al. (arXiv:2504
 
 ---
 
-## Documentation and report
-
-For coursework reporting, align console output with:
-
-- **Chapter 1:** sorting results and complexity discussion.  
-- **Chapter 2:** Cases 1–4 paths and costs (three baselines should agree).  
-- **Chapter 3:** package structure and OOP (class diagrams, sequence diagrams).  
-- **Chapter 4:** team process (e.g. Trello, Git, Feishu) and reflection.
-
-Internal technical notes may exist in `docs/CPT204_项目技术文档.md` or `docs/UML_COURSEWORK.md` if kept in your local clone.
-
----
-
 ## Troubleshooting
 
 | Issue | Suggestion |
