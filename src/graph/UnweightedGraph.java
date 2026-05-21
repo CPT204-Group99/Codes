@@ -25,25 +25,6 @@ public class UnweightedGraph<V> implements Graph<V> {
         createAdjacencyLists(edges, vertices.size());
     }
 
-    public UnweightedGraph(List<Edge> edges, int numberOfVertices) {
-        for (int i = 0; i < numberOfVertices; i++) {
-            addVertex(castVertexIndex(i));
-        }
-        createAdjacencyLists(edges, numberOfVertices);
-    }
-
-    public UnweightedGraph(int[][] edges, int numberOfVertices) {
-        for (int i = 0; i < numberOfVertices; i++) {
-            addVertex(castVertexIndex(i));
-        }
-        createAdjacencyLists(edges, numberOfVertices);
-    }
-
-    @SuppressWarnings("unchecked")
-    private V castVertexIndex(int i) {
-        return (V) Integer.valueOf(i);
-    }
-
     private void createAdjacencyLists(int[][] edges, int numberOfVertices) {
         for (int[] edge : edges) {
             addEdge(edge[0], edge[1]);
