@@ -10,6 +10,10 @@ import java.util.List;
 
 public class WeightedGraph<V> extends UnweightedGraph<V> {
 
+    public static final int DIJKSTRA_ARRAY = 0;
+    public static final int BELLMAN_FORD = 1;
+    public static final int DIJKSTRA_HEAP = 2;
+
     public WeightedGraph(List<V> vertices, List<WeightedEdge> edges) {
         createWeightedGraph(vertices, edges);
     }
@@ -34,19 +38,31 @@ public class WeightedGraph<V> extends UnweightedGraph<V> {
         return list;
     }
 
- 
+    public ShortestPathTree shortestPathTree(int sourceVertex, int algorithmType) {
+        ShortestPathComputation result;
+        if (algorithmType == DIJKSTRA_ARRAY) {
+            result = DijkstraNormal.compute(sourceVertex, neighbors);
+        } else if (algorithmType == BELLMAN_FORD) {
+            result = BellmanFord.compute(sourceVertex, neighbors);
+        } else if (algorithmType == DIJKSTRA_HEAP) {
+            result = DijkstraHeap.compute(sourceVertex, neighbors);
+        } else {
+            throw new IllegalArgumentException("Unknown algorithm type: " + algorithmType);
+        }
+        return toShortestPathTree(result);
+    }
+
     public ShortestPathTree getShortestPath(int sourceVertex) {
-        return toShortestPathTree(DijkstraNormal.compute(sourceVertex, neighbors));
+        return shortestPathTree(sourceVertex, DIJKSTRA_ARRAY);
     }
 
     public ShortestPathTree dijkstraShortestPathTreeHeap(int sourceVertex) {
-        return toShortestPathTree(DijkstraHeap.compute(sourceVertex, neighbors));
+        return shortestPathTree(sourceVertex, DIJKSTRA_HEAP);
     }
 
     public ShortestPathTree bellmanFordShortestPathTree(int sourceVertex) {
-        return toShortestPathTree(BellmanFord.compute(sourceVertex, neighbors));
+        return shortestPathTree(sourceVertex, BELLMAN_FORD);
     }
-
 
     private ShortestPathTree toShortestPathTree(ShortestPathComputation result) {
         return new ShortestPathTree(result.sourceVertex(), result.parent(), result.T(), result.cost());

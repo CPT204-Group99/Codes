@@ -38,58 +38,36 @@ public final class TaskBShortestPath {
 
         System.out.println("=== Dijkstra ===");
         System.out.println();
-        printDijkstraCases(paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
+        printCases(paths, ShortestPathService.DIJKSTRA_ARRAY,
+                datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
 
         System.out.println("=== Bellman-Ford ===");
         System.out.println();
-        printBellmanFordCases(paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
+        printCases(paths, ShortestPathService.BELLMAN_FORD,
+                datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
 
         System.out.println("=== Dijkstra (binary heap) ===");
         System.out.println();
-        printDijkstraHeapCases(paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
+        printCases(paths, ShortestPathService.DIJKSTRA_HEAP,
+                datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
 
         System.out.println("=== explore: BMSSP (DMSY arXiv:2504.17033) ===");
         System.out.println();
         printDmsyCases(dmsyPaths, paths, datasetA1, datasetA10, datasetB1, datasetB5, datasetC1, datasetC5);
     }
 
-    private static void printDijkstraCases(ShortestPathService paths,
-                                           String datasetA1,
-                                           String datasetA10,
-                                           String datasetB1,
-                                           String datasetB5,
-                                           String datasetC1,
-                                           String datasetC5) {
-        printCase(paths.findShortestPath("Case 1", datasetA1, datasetA1));
-        printCase(paths.findShortestPath("Case 2", datasetA1, datasetA10));
-        printCase(paths.findShortestPathVia("Case 3", datasetA1, datasetB1, Arrays.asList(datasetB5)));
-        printCase(paths.findShortestPathVia("Case 4", datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5)));
-    }
-
-    private static void printBellmanFordCases(ShortestPathService paths,
-                                              String datasetA1,
-                                              String datasetA10,
-                                              String datasetB1,
-                                              String datasetB5,
-                                              String datasetC1,
-                                              String datasetC5) {
-        printCase(paths.findShortestPathBellmanFord("Case 1", datasetA1, datasetA1));
-        printCase(paths.findShortestPathBellmanFord("Case 2", datasetA1, datasetA10));
-        printCase(paths.findShortestPathViaBellmanFord("Case 3", datasetA1, datasetB1, Arrays.asList(datasetB5)));
-        printCase(paths.findShortestPathViaBellmanFord("Case 4", datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5)));
-    }
-
-    private static void printDijkstraHeapCases(ShortestPathService paths,
-                                               String datasetA1,
-                                               String datasetA10,
-                                               String datasetB1,
-                                               String datasetB5,
-                                               String datasetC1,
-                                               String datasetC5) {
-        printCase(paths.findShortestPathDijkstraHeap("Case 1", datasetA1, datasetA1));
-        printCase(paths.findShortestPathDijkstraHeap("Case 2", datasetA1, datasetA10));
-        printCase(paths.findShortestPathViaDijkstraHeap("Case 3", datasetA1, datasetB1, Arrays.asList(datasetB5)));
-        printCase(paths.findShortestPathViaDijkstraHeap("Case 4", datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5)));
+    private static void printCases(ShortestPathService paths,
+                                   int algorithmType,
+                                   String datasetA1,
+                                   String datasetA10,
+                                   String datasetB1,
+                                   String datasetB5,
+                                   String datasetC1,
+                                   String datasetC5) {
+        printCase(paths.findPath("Case 1", datasetA1, datasetA1, algorithmType));
+        printCase(paths.findPath("Case 2", datasetA1, datasetA10, algorithmType));
+        printCase(paths.findPathVia("Case 3", datasetA1, datasetB1, Arrays.asList(datasetB5), algorithmType));
+        printCase(paths.findPathVia("Case 4", datasetA1, datasetC1, Arrays.asList(datasetB5, datasetC5), algorithmType));
     }
 
     private static void printDmsyCases(DmsyShortestPathService dmsyPaths,
@@ -119,8 +97,8 @@ public final class TaskBShortestPath {
             printCase(result);
         } catch (RuntimeException ex) {
             PathResult ref = vias.isEmpty()
-                    ? dijkstraPaths.findShortestPath(caseName, start, destination)
-                    : dijkstraPaths.findShortestPathVia(caseName, start, destination, vias);
+                    ? dijkstraPaths.findPath(caseName, start, destination, ShortestPathService.DIJKSTRA_ARRAY)
+                    : dijkstraPaths.findPathVia(caseName, start, destination, vias, ShortestPathService.DIJKSTRA_ARRAY);
             System.out.println(caseName);
             System.out.println("  BMSSP failed: " + ex.getMessage());
             System.out.printf("  (Dijkstra reference: cost %s, path %s)%n",

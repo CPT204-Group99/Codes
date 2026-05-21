@@ -9,9 +9,9 @@ import java.util.List;
 
 public class ShortestPathService {
 
-    private static final int DIJKSTRA_ARRAY = 0;
-    private static final int BELLMAN_FORD = 1;
-    private static final int DIJKSTRA_HEAP = 2;
+    public static final int DIJKSTRA_ARRAY = 0;
+    public static final int BELLMAN_FORD = 1;
+    public static final int DIJKSTRA_HEAP = 2;
 
     private final WeightedGraph<String> graph;
 
@@ -19,44 +19,15 @@ public class ShortestPathService {
         this.graph = graph;
     }
 
-    public PathResult findShortestPath(String caseName, String startId, String destinationId) {
-        return findShortestPathVia(caseName, startId, destinationId, Collections.emptyList());
+    public PathResult findPath(String caseName, String startId, String destinationId, int algorithmType) {
+        return findPathVia(caseName, startId, destinationId, Collections.emptyList(), algorithmType);
     }
 
-    public PathResult findShortestPathVia(String caseName,
-                                          String startId,
-                                          String destinationId,
-                                          List<String> orderedWaypoints) {
-        return buildPathResult(caseName, startId, destinationId, orderedWaypoints, DIJKSTRA_ARRAY);
-    }
-
-    public PathResult findShortestPathBellmanFord(String caseName, String startId, String destinationId) {
-        return findShortestPathViaBellmanFord(caseName, startId, destinationId, Collections.emptyList());
-    }
-
-    public PathResult findShortestPathViaBellmanFord(String caseName,
-                                                     String startId,
-                                                     String destinationId,
-                                                     List<String> orderedWaypoints) {
-        return buildPathResult(caseName, startId, destinationId, orderedWaypoints, BELLMAN_FORD);
-    }
-
-    public PathResult findShortestPathDijkstraHeap(String caseName, String startId, String destinationId) {
-        return findShortestPathViaDijkstraHeap(caseName, startId, destinationId, Collections.emptyList());
-    }
-
-    public PathResult findShortestPathViaDijkstraHeap(String caseName,
-                                                    String startId,
-                                                    String destinationId,
-                                                    List<String> orderedWaypoints) {
-        return buildPathResult(caseName, startId, destinationId, orderedWaypoints, DIJKSTRA_HEAP);
-    }
-
-    private PathResult buildPathResult(String caseName,
-                                       String startId,
-                                       String destinationId,
-                                       List<String> orderedWaypoints,
-                                       int algorithmType) {
+    public PathResult findPathVia(String caseName,
+                                  String startId,
+                                  String destinationId,
+                                  List<String> orderedWaypoints,
+                                  int algorithmType) {
         List<String> stops = new ArrayList<>();
         stops.add(startId);
         stops.addAll(orderedWaypoints);
@@ -89,16 +60,7 @@ public class ShortestPathService {
         }
 
         long start = System.nanoTime();
-        WeightedGraph<String>.ShortestPathTree tree;
-        if (algorithmType == DIJKSTRA_ARRAY) {
-            tree = graph.getShortestPath(startIndex);
-        } else if (algorithmType == BELLMAN_FORD) {
-            tree = graph.bellmanFordShortestPathTree(startIndex);
-        } else if (algorithmType == DIJKSTRA_HEAP) {
-            tree = graph.dijkstraShortestPathTreeHeap(startIndex);
-        } else {
-            throw new IllegalArgumentException("Unknown algorithm type: " + algorithmType);
-        }
+        WeightedGraph<String>.ShortestPathTree tree = graph.shortestPathTree(startIndex, algorithmType);
         long algorithmElapsedNanos = System.nanoTime() - start;
 
         double cost = tree.getCost(destinationIndex);

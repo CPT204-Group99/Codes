@@ -13,7 +13,7 @@ A single Java application for the CPT204 group project: **Task A** ranks candida
 | **C** | Layered packages, shared models, and services (see report / UML in `docs/` if present locally). |
 | **D** | Team reflection (report; not in code). |
 
-**Entry point:** `main.CourseworkMain` — runs Task A once, then Task B with the same Top-10 map.
+**Entry point:** `main.CourseworkMain` — runs Task A once, then Task B with the returned Top-10 map.
 
 **Optional:** `explore` package — BMSSP experiment (Duan et al., arXiv:2504.17033); not required for grading baseline correctness.
 
@@ -41,7 +41,7 @@ java -cp out main.CourseworkMain "Group Project Datasets"
 
 If you omit the argument, the default directory is `Group Project Datasets` (relative to the current working directory).
 
-**Note:** Task A uses `MEASURED_RUNS = 1000` per algorithm per dataset. A full run can take several minutes (especially bubble sort). For quick local tests, temporarily lower `MEASURED_RUNS` in `TaskASorting.java`.
+**Note:** Task A uses `SortingService.MEASURED_RUNS = 1000` per algorithm per dataset. A full run can take several minutes (especially bubble sort). For quick local tests, temporarily lower that constant in `SortingService.java`.
 
 ---
 
@@ -100,8 +100,8 @@ Then:
 src/
 ├── main/
 │   ├── CourseworkMain.java      # Single entry: Task A → Task B
-│   ├── TaskASorting.java        # Sorting benchmarks + Top-10 map
-│   └── TaskBShortestPath.java   # Graph load + Cases 1–4 + console output
+│   ├── TaskASorting.java        # Task A console workflow (loads CSV, prints)
+│   └── TaskBShortestPath.java   # Task B console workflow (Cases 1–4)
 ├── model/
 │   ├── Location.java            # Candidate record + compareTo
 │   └── PathResult.java          # Shortest-path query result
@@ -118,8 +118,9 @@ src/
 │   ├── QuickSortMedianOfThree.java
 │   └── MergeSort.java
 ├── service/
-│   ├── SortingService.java      # Algorithm list, copyList, isSorted, topN
-│   └── ShortestPathService.java # Segmented queries; int + if-else for SSSP choice
+│   ├── SortingService.java      # Benchmark protocol, Top-10 selection, algorithm registry
+│   ├── AlgorithmBenchmarkResult.java / DatasetSortingResult.java
+│   └── ShortestPathService.java # Segmented queries via findPathVia(..., algorithmType)
 ├── graph/
 │   ├── Graph.java
 │   ├── Edge.java / WeightedEdge.java
@@ -140,8 +141,8 @@ src/
 
 | Package | Responsibility |
 |---------|----------------|
-| `main` | Orchestration and console I/O only. |
-| `service` | Task-level rules: sort registration, segmented shortest paths, timing. |
+| `main` | Task A/B console workflow; delegates benchmarks and path queries to `service`. |
+| `service` | Sorting benchmarks (`SortingService`), path queries (`ShortestPathService.findPathVia`). |
 | `model` | Immutable-style data carriers shared by A and B. |
 | `dataloader` | CSV parsing isolated from algorithms. |
 | `sortingalgorithms` | Concrete sorts; no knowledge of CSV or Task B. |
@@ -152,11 +153,11 @@ src/
 
 ## Design highlights
 
-- **Pipeline:** `CourseworkMain` calls `TaskASorting.runSelection` and passes the returned `Map<String, List<Location>>` directly into `TaskBShortestPath.runTaskB`.
+- **Pipeline:** `CourseworkMain` calls `TaskASorting.runTaskA` and passes the returned `Map<String, List<Location>>` into `TaskBShortestPath.runTaskB`.
 - **Fair sorting comparison:** Each timed run sorts a **fresh copy** of the list; warm-up runs are excluded from reported averages.
 - **Graph storage:** Adjacency list `List<List<Edge>>` with integer vertex indices; each undirected CSV row becomes two directed `WeightedEdge` entries.
-- **ShortestPathService:** One `buildPathResult` loop; algorithm choice uses `int` constants and `if-else` (no lambdas or functional interfaces required for coursework).
-- **Top-10 storage:** After all algorithms finish on a dataset, the last algorithm’s sorted order defines the stored Top-10 (see `SortingService.allAlgorithms()` order — currently ends with merge sort).
+- **ShortestPathService:** Segmented queries via `findPathVia(..., algorithmType)`; `WeightedGraph.shortestPathTree` selects SSSP with `int` + `if-else`.
+- **Top-10 for Task B:** `SortingService.selectTop10ForTaskB` runs one Merge Sort (last registered algorithm) per dataset; benchmark loops only measure algorithms and do not define Task B endpoints.
 
 ---
 
@@ -221,7 +222,7 @@ This code is an **educational port** of BMSSP ideas from Duan et al. (arXiv:2504
 | Issue | Suggestion |
 |-------|------------|
 | `FileNotFoundException` for CSV | Run from project root or pass absolute path: `java -cp out main.CourseworkMain "C:\...\Group Project Datasets"` |
-| Run takes very long | Reduce `MEASURED_RUNS` in `TaskASorting` for debugging only; restore for final report numbers |
+| Run takes very long | Reduce `SortingService.MEASURED_RUNS` for debugging only; restore for final report numbers |
 | `IllegalStateException` on sort | Algorithm failed `isSorted` — check `compareTo` and sort implementation |
 | `No path found` | Start/end ID not in graph or disconnected segment — verify `location_id` exists in `paths.csv` |
 | Garbled console on Windows | Use UTF-8 terminal; compile with `-encoding UTF-8` |
